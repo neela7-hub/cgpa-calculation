@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>University Student CGPA Calculator</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background-image: url("img/WhatsApp Image 2026-06-03 at 10.07.41 PM.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding:20px;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+}
+
+.card{
+    background:white;
+    opacity: 70%;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:20px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    
+}
+
+h1,h2{
+    text-align:center;
+    margin-bottom:15px;
+    color:#003366;
+}
+
+input,select{
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+button{
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    background: #0B2F52;
+    color: #FEFEFE;
+    cursor: pointer;
+    margin: 5px;
+}
+
+button:hover{
+    background: #154a7d;
+}
+
+.row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.col{
+    flex:1;
+    min-width:250px;
+}
+
+.hidden{
+    display:none;
+}
+
+.info{
+    background:#eef5ff;
+    padding:10px;
+    border-radius:5px;
+    margin-bottom:15px;
+    font-weight:bold;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+table,th,td{
+    border:1px solid #ccc;
+}
+
+th,td{
+    padding:10px;
+    text-align:center;
+}
+
+.result{
+    font-size:22px;
+    font-weight:bold;
+    color:green;
+    text-align:center;
+    margin-top:15px;
+}
+
+.radio-group{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:10px 0;
+}
+
+label{
+    font-size:14px;
+}
+.password-container{
+    position:relative;
+    width:100%;
+}
+
+.password-container input{
+    width:100%;
+    padding-right:45px;
+}
+
+.eye-icon{
+    position:absolute;
+    right:15px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    font-size:18px;
+}
+#errorMessage{
+    color:red;
+    font-size:14px;
+    margin-top:5px;
+    margin-bottom:10px;
+    font-weight:bold;
+}
+#studentName,
+#regNo,
+#department,
+#institution,
+#university{
+    text-transform: uppercase;
+}
+@page{
+    size: A4;
+    margin: 10mm;
+}
+
+body{
+    margin:0;
+}
+.header{
+    display:flex;
+    align-items:center;
+}
+
+.logo{
+    width:80px;
+    height:80px;
+}
+
+.header h2{
+    flex:1;
+    text-align:center;
+    margin-right:80px; /* same as logo width */
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<div class="card" id="loginPage">
+    <h1>University Student CGPA Calculator</h1>
+
+    <input type="text" id="username" placeholder="Email ID or Mobile Number">
+
+<div class="password-container">
+    <input type="password"
+           id="password"
+           placeholder="Password">
+
+    <span id="eye"
+          class="eye-icon"
+          onclick="togglePassword()">
+          👁️
+    </span>
+<div id="errorMessage"></div>
+</div>
+
+<small>
+Password must contain:
+8+ characters, 1 uppercase, 1 lowercase,
+1 number and 1 special character.
+</small>
+
+    <center>
+        <button onclick="showDetails()">Login</button>
+    </center>
+</div>
+
+<div class="card hidden" id="detailsPage">
+
+    <h2>PERSONAL INFORMATION</h2>
+
+    <input type="text" id="studentName" placeholder="Student Name">
+
+    <input type="text" id="regNo" placeholder="Register Number">
+
+    <select id="degree" onchange="updateYearAndSemester()">
+        <option value="">SELECT DEGREE</option>
+<option>B.E</option>
+<option>B.TECH</option>
+<option>B.SC</option>
+<option>BCA</option>
+<option>B.COM</option>
+<option>B.A</option>
+<option>OTHERS</option>
+    </select>
+
+    <input type="text" id="department" placeholder="Department">
+
+    <select id="year">
+        <option>SELECT YEAR</option>
+    </select>
+
+    <input type="text" id="institution" placeholder="Institution Name">
+
+    <input type="text" id="university" placeholder="University Name">
+
+
+    <select id="text" placeholder="District">
+        <option>SELECT DISTRICT</option>
+       <option>ARIYALUR</option>
+<option>CHENGALPATTU</option>
+<option>CHENNAI</option>
+<option>COIMBATORE</option>
+<option>CUDDALORE</option>
+<option>DHARMAPURI</option>
+<option>DINDIGUL</option>
+<option>ERODE</option>
+<option>KALLAKURICHI</option>
+<option>KANCHIPURAM</option>
+<option>KANNIYAKUMARI</option>
+<option>KARUR</option>
+<option>KRISHNAGIRI</option>
+<option>MADURAI</option>
+<option>MAYILADUTHURAI</option>
+<option>NAGAPATTINAM</option>
+<option>NAMAKKAL</option>
+<option>NILGIRIS</option>
+<option>PERAMBALUR</option>
+<option>PUDUKKOTTAI</option>
+<option>RAMANATHAPURAM</option>
+<option>RANIPET</option>
+<option>SALEM</option>
+<option>SIVAGANGAI</option>
+<option>TENKASI</option>
+<option>THANJAVUR</option>
+<option>THENI</option>
+<option>THOOTHUKUDI</option>
+<option>TIRUCHIRAPPALLI</option>
+<option>TIRUNELVELI</option>
+<option>TIRUPATHUR</option>
+<option>TIRUPPUR</option>
+<option>TIRUVALLUR</option>
+<option>TIRUVANNAMALAI</option>
+<option>TIRUVARUR</option>
+<option>VELLORE</option>
+<option>VILUPPURAM</option>
+<option>VIRUDHUNAGAR</option>
+    </select>
+
+    <input type="email" id="mail" placeholder="Mail ID">
+
+    <center>
+        <button onclick="openGPA()">GPA Calculator</button>
+        <button onclick="openCGPA()">CGPA Calculator</button>
+    </center>
+
+</div>
+
+<div class="card hidden" id="gpaPage">
+
+    <h2>GPA Calculator</h2>
+
+<div class="info" id="gpaInfo"></div>
+    <label><b>SELECT SEMESTER</b></label>
+<select id="semester" placeholder="ENTER SEMESTER">
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+    <option>5</option>
+    <option>6</option>
+    <option>7</option>
+    <option>8</option>
+</select>
+
+    <label><b>REGULATION</b></label>
+<select id="gparegulation">
+    <option>R2017</option>
+    <option>R2021</option>
+    <option>R2024</option>
+</select>
+<div id="gpaSemesterRadio" class="radio-group"></div>
+
+    <table id="subjectTable">
+        <tr>
+            <th>Subject Title</th>
+            <th>Subject Code</th>
+            <th>Credit</th>
+            <th>Grade</th>
+        </tr>
+    </table>
+
+    <button onclick="addSubject()">Add Subject</button>
+<button onclick="calculateGPA()">Calculate GPA</button>
+<button onclick="printReport()">Print Report</button>
+
+<div class="result" id="gpaResult"></div>
+
+<div class="card hidden" id="cgpaPage">
+
+    <h2>CGPA Calculator</h2>
+
+    <div class="info" id="cgpaInfo"></div>
+
+     <label><b>REGULATION</b></label>
+
+<select id="cgparegulation">
+    <option>R2017</option>
+    <option>R2021</option>
+    <option>R2024</option>
+</select>
+    <h3>Select Semester Count</h3>
+
+    <div id="semesterRadio" class="radio-group"></div>
+
+    <div id="semesterInputs"></div>
+<button onclick="createSemesterInputs()">Create GPA Fields</button>
+
+<button onclick="calculateCGPA()">Calculate CGPA</button>
+
+<button onclick="printReport()">Print Report</button>
+
+<div class="result" id="cgpaResult"></div>
+
+</div>
+</div>
+<script>
+
+function showDetails(){
+
+    let username =
+    document.getElementById("username").value.trim();
+
+    let password =
+    document.getElementById("password").value;
+
+    let emailPattern =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    let mobilePattern =
+    /^[0-9]{10}$/;
+
+    let passwordPattern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{8,}$/;
+
+    if(
+        !emailPattern.test(username) &&
+        !mobilePattern.test(username)
+    ){
+        alert("Enter a valid Email ID or 10-digit Mobile Number");
+        return;
+    }
+
+    if(!passwordPattern.test(password)){
+        alert(
+        "Password must contain:\n\n" +
+        "• Minimum 8 characters\n" +
+        "• One uppercase letter\n" +
+        "• One lowercase letter\n" +
+        "• One number\n" +
+        "• One special character"
+        );
+        return;
+    }
+
+    document.getElementById("loginPage")
+    .classList.add("hidden");
+
+    document.getElementById("detailsPage")
+    .classList.remove("hidden");
+}
+function updateYearAndSemester(){
+
+    let degree = document.getElementById("degree").value;
+    let year = document.getElementById("year");
+
+    year.innerHTML = "";
+
+    let maxYear = 3;
+
+    if(degree === "B.E" || degree === "B.TECH"){
+        maxYear = 4;
+    }
+    else if(degree === "OTHERS"){
+        maxYear = 5;
+    }
+
+    year.innerHTML = "<option>SELECT YEAR</option>";
+
+    for(let i = 1; i <= maxYear; i++){
+        year.innerHTML += `<option>${i} YEAR</option>`;
+    }
+}
+
+function getDetails(){
+
+    return `
+    Degree: ${document.getElementById("degree").value}
+    |
+    Department: ${document.getElementById("department").value}
+    |
+    Year: ${document.getElementById("year").value}
+    `;
+}
+
+function openGPA(){
+
+    document.getElementById("gpaPage")
+    .classList.remove("hidden");
+
+    document.getElementById("gpaInfo")
+    .innerHTML = getDetails();
+
+    let degree =
+    document.getElementById("degree").value;
+
+    let maxSem = 6;
+
+    if(degree === "B.E" || degree === "B.TECH"){
+        maxSem = 8;
+    }
+
+    let radioDiv =
+    document.getElementById("gpaSemesterRadio");
+
+    radioDiv.innerHTML = "";
+
+}
+
+
+function openCGPA(){
+
+    document.getElementById("cgpaPage")
+    .classList.remove("hidden");
+
+    document.getElementById("cgpaInfo")
+    .innerHTML = getDetails();
+
+    let degree =
+    document.getElementById("degree").value;
+
+    let maxSem = 6;
+
+    if(degree === "B.E" || degree === "B.TECH"){
+        maxSem = 8;
+    }
+    else if(degree === "OTHERS"){
+        maxSem = 10;
+    }
+
+    let radioDiv =
+    document.getElementById("semesterRadio");
+
+    radioDiv.innerHTML = "";
+
+    for(let i = 1; i <= maxSem; i++){
+
+        radioDiv.innerHTML += `
+        <label>
+            <input type="radio"
+                   name="semcount"
+                   value="${i}">
+            SEM ${i}
+        </label>
+        `;
+    }
+}
+
+function addSubject(){
+
+    let table=document.getElementById("subjectTable");
+
+    let row=table.insertRow();
+
+    row.innerHTML=`
+    <td><input type="text"></td>
+    <td><input type="text"></td>
+    <td>
+        <input type="number" min="1">
+    </td>
+    <td>
+        <select>
+            <option>O</option>
+            <option>A+</option>
+            <option>A</option>
+            <option>B+</option>
+            <option>B</option>
+            <option>C</option>
+            <option>RA</option>
+        </select>
+    </td>
+    `;
+}
+
+function gradePoint(g){
+
+    if(g=="O") return 10;
+    if(g=="A+") return 9;
+    if(g=="A") return 8;
+    if(g=="B+") return 7;
+    if(g=="B") return 6;
+    if(g=="C") return 5;
+
+    return 0;
+}
+
+function calculateGPA(){
+
+    let semester =
+    document.getElementById("semester").value;
+
+    if(
+        semester === "" ||
+        semester === "SELECT SEMESTER" ||
+        semester === "Select Semester"
+    ){
+        alert("PLEASE SELECT A SEMESTER");
+        return;
+    }
+
+    let table =
+    document.getElementById("subjectTable");
+
+    let totalCredits = 0;
+    let totalPoints = 0;
+
+    for(let i = 1; i < table.rows.length; i++){
+
+        let credit = parseFloat(
+            table.rows[i].cells[2]
+            .querySelector("input").value
+        );
+
+        let grade =
+            table.rows[i].cells[3]
+            .querySelector("select").value;
+
+        if(!isNaN(credit)){
+
+            totalCredits += credit;
+
+            totalPoints +=
+            credit * gradePoint(grade);
+        }
+    }
+
+    if(totalCredits === 0){
+        alert("PLEASE ENTER SUBJECT DETAILS");
+        return;
+    }
+
+    let gpa =
+    (totalPoints / totalCredits).toFixed(2);
+
+    document.getElementById("gpaResult").innerHTML =
+    "FINAL GPA : " + gpa;
+}
+
+
+function createSemesterInputs(){
+
+    let selected=document.querySelector(
+    'input[name="semcount"]:checked');
+
+    if(!selected){
+        alert("Select Semester Count");
+        return;
+    }
+
+    let count=parseInt(selected.value);
+
+    let div=document.getElementById("semesterInputs");
+
+    div.innerHTML="";
+
+    for(let i=1;i<=count;i++){
+
+        div.innerHTML+=`
+        <input type="number"
+        step="0.01"
+        class="gpaInput"
+        placeholder="Semester ${i} GPA">
+        `;
+    }
+}
+
+function calculateCGPA(){
+
+    let gpas=document.getElementsByClassName("gpaInput");
+
+    let sum=0;
+
+    let count=0;
+
+    for(let g of gpas){
+
+        let value=parseFloat(g.value);
+
+        if(!isNaN(value)){
+            sum+=value;
+            count++;
+        }
+    }
+
+    if(count===0){
+        alert("Enter GPA values");
+        return;
+    }
+
+    let cgpa=(sum/count).toFixed(2);
+
+    document.getElementById("cgpaResult").innerHTML=
+    "Final CGPA : "+cgpa;
+}
+function togglePassword(){
+
+    let password =
+    document.getElementById("password");
+
+    let eye =
+    document.getElementById("eye");
+
+    if(password.type === "password"){
+        password.type = "text";
+        eye.innerHTML = "🙈";
+    }
+    else{
+        password.type = "password";
+        eye.innerHTML = "👁️";
+    }
+}
+document.getElementById("studentName").addEventListener("input", function(){
+    this.value = this.value.toUpperCase();
+});
+
+document.getElementById("regNo").addEventListener("input", function(){
+    this.value = this.value.toUpperCase();
+});
+
+document.getElementById("department").addEventListener("input", function(){
+    this.value = this.value.toUpperCase();
+});
+
+document.getElementById("institution").addEventListener("input", function(){
+    this.value = this.value.toUpperCase();
+});
+
+document.getElementById("university").addEventListener("input", function(){
+    this.value = this.value.toUpperCase();
+});
+function printReport(){
+
+    let studentName = document.getElementById("studentName").value;
+    let regNo = document.getElementById("regNo").value;
+    let degree = document.getElementById("degree").value;
+    let department = document.getElementById("department").value;
+    let year = document.getElementById("year").value;
+    let institution = document.getElementById("institution").value;
+    let university = document.getElementById("university").value;
+    let district = document.getElementById("text").value;
+    let mail = document.getElementById("mail").value;
+
+    let semester = document.getElementById("semester") ?
+                   document.getElementById("semester").value : "";
+
+    let gpaRegulation = document.getElementById("gparegulation") ?
+                        document.getElementById("gparegulation").value : "";
+
+    let cgpaRegulation = document.getElementById("cgparegulation") ?
+                         document.getElementById("cgparegulation").value : "";
+
+    let gpa = document.getElementById("gpaResult") ?
+              document.getElementById("gpaResult").innerText : "";
+
+    let cgpa = document.getElementById("cgpaResult") ?
+               document.getElementById("cgpaResult").innerText : "";
+
+    let tableRows = "";
+
+    let table = document.getElementById("subjectTable");
+
+    if(table){
+        for(let i = 1; i < table.rows.length; i++){
+
+            let title = table.rows[i].cells[0].querySelector("input").value;
+            let code = table.rows[i].cells[1].querySelector("input").value;
+            let credit = table.rows[i].cells[2].querySelector("input").value;
+            let grade = table.rows[i].cells[3].querySelector("select").value;
+
+            tableRows += `
+            <tr>
+                <td>${title}</td>
+                <td>${code}</td>
+                <td>${credit}</td>
+                <td>${grade}</td>
+            </tr>`;
+        }
+    }
+
+    let cgpaRows = "";
+
+    let gpaInputs = document.getElementsByClassName("gpaInput");
+
+    for(let i = 0; i < gpaInputs.length; i++){
+
+        cgpaRows += `
+        <tr>
+            <td>Semester ${i + 1}</td>
+            <td>${gpaInputs[i].value}</td>
+        </tr>`;
+    }
+
+    if(cgpaRows.trim() === ""){
+        cgpaRows = `
+        <tr>
+            <td colspan="2">No CGPA Data Available</td>
+        </tr>`;
+    }
+
+    let printWindow = window.open("", "_blank");
+
+    printWindow.document.write(`
+    <html>
+    <head>
+
+        <style>
+
+        @page{
+            size:A4;
+            margin:10mm;
+        }
+
+        body{
+            font-family:Arial,sans-serif;
+            padding:20px;
+            color:black;
+        }
+
+        .header{
+            display:flex;
+            align-items:center;
+            gap:20px;
+        }
+
+        .logo{
+            width:80px;
+            height:80px;
+        }
+
+        .header h2{
+            flex:1;
+            text-align:center;
+            margin-right:80px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:15px;
+        }
+
+        table,th,td{
+            border:1px solid black;
+        }
+
+        th,td{
+            padding:8px;
+            text-align:center;
+        }
+
+        .line{
+            margin:6px 0;
+        }
+
+        .result{
+            font-size:22px;
+            font-weight:bold;
+            text-align:center;
+            margin-top:20px;
+        }
+
+        .verified{
+            text-align:right;
+            margin-top:50px;
+            font-size:22px;
+            font-weight:bold;
+        }
+
+        hr{
+            margin:20px 0;
+        }
+
+        </style>
+    </head>
+
+    <body>
+
+        <div class="header">
+            <img src="./img/image.png" alt="Logo" class="logo">
+            <h2>University Student CGPA Calculator</h2>
+        </div>
+
+        <hr>
+
+        <p class="line"><b>Name :</b> ${studentName}</p>
+        <p class="line"><b>Register No :</b> ${regNo}</p>
+        <p class="line"><b>Degree :</b> ${degree}</p>
+        <p class="line"><b>Department :</b> ${department}</p>
+        <p class="line"><b>Year :</b> ${year}</p>
+        <p class="line"><b>Institution :</b> ${institution}</p>
+        <p class="line"><b>University :</b> ${university}</p>
+        <p class="line"><b>District :</b> ${district}</p>
+        <p class="line"><b>Mail ID :</b> ${mail}</p>
+
+        <hr>
+
+        <h2>GPA Calculator</h2>
+
+        <p><b>Semester :</b> ${semester}</p>
+        <p><b>Regulation :</b> ${gpaRegulation}</p>
+
+        <table>
+            <tr>
+                <th>Subject Title</th>
+                <th>Subject Code</th>
+                <th>Credit</th>
+                <th>Grade</th>
+            </tr>
+
+            ${tableRows}
+        </table>
+
+        <div class="result">
+            ${gpa}
+        </div>
+
+        <hr>
+
+        <h2>CGPA Calculator</h2>
+
+        <p><b>Regulation :</b> ${cgpaRegulation}</p>
+
+        <table>
+            <tr>
+                <th>Semester</th>
+                <th>GPA Obtained</th>
+            </tr>
+
+            ${cgpaRows}
+        </table>
+
+        <div class="result">
+            ${cgpa}
+        </div>
+
+        <div class="verified">
+            VERIFIED
+        </div>
+
+    </body>
+    </html>
+    `);
+
+    printWindow.document.close();
+
+    setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+    }, 1000);
+}
+</script>
+
+</body>
+</html>
