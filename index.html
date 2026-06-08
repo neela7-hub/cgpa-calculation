@@ -366,6 +366,7 @@ Password must contain minimum 8 characters with 1 uppercase, 1 lowercase, 1 nume
 let semesterGPAs = [];
 let startSemester = 1;
 let currentSemester = 1;
+let maxSemester = 8;
 function showDetails(){
 
     let username =
@@ -456,35 +457,32 @@ function openGPA(){
 
     document.getElementById("gpaInfo")
     .innerHTML = getDetails();
-    document.getElementById("semesterContainer").innerHTML = "";
+
     startSemester =
-parseInt(document.getElementById("semester").value);
+    parseInt(document.getElementById("semester").value);
 
-currentSemester = startSemester;
-    document.getElementById(
-"firstSemesterHeading"
-).innerHTML =
-"Semester " + startSemester;
+    currentSemester = startSemester;
 
-if(document.getElementById("subjectTable1") === null){
-    addSemester();
-}
     let degree =
     document.getElementById("degree").value;
 
-    let maxSem = 6;
-
     if(degree === "B.E" || degree === "B.TECH"){
-        maxSem = 8;
+        maxSemester = 8;
     }
+    else{
+        maxSemester = 6;
+    }
+
+    document.getElementById(
+    "firstSemesterHeading"
+    ).innerHTML =
+    "Semester " + startSemester;
 
     let radioDiv =
     document.getElementById("gpaSemesterRadio");
 
     radioDiv.innerHTML = "";
-
 }
-
 
 function openCGPA(){
 
@@ -852,17 +850,51 @@ setTimeout(() => {
 
 }
 
-function addSemester() {
+function addSemester(){
 
-    let container = document.getElementById("semesterContainer");
+    if(currentSemester >= maxSemester){
+        alert("Maximum Semester Reached");
+        return;
+    }
 
     currentSemester++;
 
-if (currentSemester > 8){
-    alert("Maximum Semester Reached");
-    return;
-}
+    let semesterNo = currentSemester;
 
+    let container =
+    document.getElementById("semesterContainer");
+
+    let div = document.createElement("div");
+
+    div.className = "semester-card";
+
+    div.innerHTML = `
+        <h3>Semester ${semesterNo}</h3>
+
+        <table id="subjectTable${semesterNo}">
+            <tr>
+                <th>Subject Title</th>
+                <th>Subject Code</th>
+                <th>Credit</th>
+                <th>Grade</th>
+            </tr>
+        </table>
+
+        <button onclick="addSubject(${semesterNo})">
+            Add Subject
+        </button>
+
+        <button onclick="calculateGPA(${semesterNo})">
+            Calculate GPA
+        </button>
+
+        <div id="gpaResult${semesterNo}" class="result"></div>
+
+        <hr>
+    `;
+
+    container.appendChild(div);
+}
 let semesterNo = currentSemester;
 
     let div = document.createElement("div");
