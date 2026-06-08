@@ -341,6 +341,7 @@ Password must contain minimum 8 characters with 1 uppercase, 1 lowercase, 1 nume
 
 <button onclick="addSemester()">Add Semester</button>
 <button onclick="printReport()">Print Report</button>
+</div>
 <div class="card hidden" id="cgpaPage">
 
 <hr>
@@ -459,6 +460,8 @@ function openGPA(){
 
     document.getElementById("gpaInfo")
     .innerHTML = getDetails();
+    document.getElementById("semesterContainer").innerHTML = "";
+semesterGPAs = [];
 
     startSemester =
     parseInt(document.getElementById("semester").value);
@@ -727,7 +730,7 @@ gpaInputs.forEach((input,index)=>{
 
     semesterGPARows += `
     <tr>
-        <td>Semester ${startSemester + index}</td>
+        <td>Semester ${index + 1}</td>
         <td>${input.value || "-"}</td>
     </tr>`;
 });
