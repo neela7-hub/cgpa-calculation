@@ -14,7 +14,7 @@
 }
 
 body{
-    background-image: url("WhatsApp Image 2026-06-03 at 10.07.41 PM.jpeg");
+    background-image: url("WhatsApp%20Image%202026-06-03%20at%2010.07.41%20PM.jpeg");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -139,6 +139,7 @@ label{
     cursor:pointer;
     font-size:18px;
 }
+
 #errorMessage{
     color:red;
     font-size:14px;
@@ -176,6 +177,13 @@ body{
     text-align:center;
     margin-right:80px; /* same as logo width */
 }
+.semester-card{
+    margin-top:20px;
+    padding:15px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    background:#f9f9f9;
+}
 </style>
 </head>
 <body>
@@ -200,9 +208,7 @@ body{
 </div>
 
 <small>
-Password must contain:
-8+ characters, 1 uppercase, 1 lowercase,
-1 number and 1 special character.
+Password must contain minimum 8 characters with 1 uppercase, 1 lowercase, 1 numerical value and 1 special character.
 </small>
 
     <center>
@@ -235,10 +241,15 @@ Password must contain:
         <option>SELECT YEAR</option>
     </select>
 
+   <select id="regulation" required>
+    <option value="regulation">SELECT REGULATION</option>
+    <option value="R2017">R2017</option>
+    <option value="R2021">R2021</option>
+    <option value="R2024">R2024</option>
+   </select>
     <input type="text" id="institution" placeholder="Institution Name">
 
     <input type="text" id="university" placeholder="University Name">
-
 
     <select id="text" placeholder="District">
         <option>SELECT DISTRICT</option>
@@ -308,15 +319,9 @@ Password must contain:
     <option>8</option>
 </select>
 
-    <label><b>REGULATION</b></label>
-<select id="gparegulation">
-    <option>R2017</option>
-    <option>R2021</option>
-    <option>R2024</option>
-</select>
 <div id="gpaSemesterRadio" class="radio-group"></div>
 
-    <table id="subjectTable">
+    <table id="subjectTable1">
         <tr>
             <th>Subject Title</th>
             <th>Subject Code</th>
@@ -325,25 +330,23 @@ Password must contain:
         </tr>
     </table>
 
-    <button onclick="addSubject()">Add Subject</button>
-<button onclick="calculateGPA()">Calculate GPA</button>
-<button onclick="printReport()">Print Report</button>
+    <button onclick="addSubject(1)">Add Subject</button>
+    <button onclick="calculateGPA(1)">Calculate GPA</button>
+    <button onclick="addSemester()">Add Semester</button>
+    <button onclick="printReport()">Print Report</button>
 
-<div class="result" id="gpaResult"></div>
+<div class="result" id="gpaResult1"></div>
+<div id="semesterContainer"></div>
 </div>
+
 <div class="card hidden" id="cgpaPage">
+
+<hr>
 
     <h2>CGPA Calculator</h2>
 
     <div class="info" id="cgpaInfo"></div>
 
-     <label><b>REGULATION</b></label>
-
-<select id="cgparegulation">
-    <option>R2017</option>
-    <option>R2021</option>
-    <option>R2024</option>
-</select>
     <h3>Select Semester Count</h3>
 
     <div id="semesterRadio" class="radio-group"></div>
@@ -360,7 +363,7 @@ Password must contain:
 </div>
 </div>
 <script>
-
+let semesterGPAs = [];
 function showDetails(){
 
     let username =
@@ -429,12 +432,18 @@ function updateYearAndSemester(){
 
 function getDetails(){
 
+    let degree = document.getElementById("degree").value || "";
+    let department = document.getElementById("department").value || "";
+    let year = document.getElementById("year").value;
+
+    if(year === "SELECT YEAR"){
+        year = "";
+    }
+
     return `
-    Degree: ${document.getElementById("degree").value}
-    |
-    Department: ${document.getElementById("department").value}
-    |
-    Year: ${document.getElementById("year").value}
+    Degree: ${degree} |
+    Department: ${department} |
+    Year: ${year}
     `;
 }
 
@@ -445,7 +454,11 @@ function openGPA(){
 
     document.getElementById("gpaInfo")
     .innerHTML = getDetails();
+    document.getElementById("semesterContainer").innerHTML = "";
 
+if(document.getElementById("subjectTable1") === null){
+    addSemester();
+}
     let degree =
     document.getElementById("degree").value;
 
@@ -501,32 +514,6 @@ function openCGPA(){
     }
 }
 
-function addSubject(){
-
-    let table=document.getElementById("subjectTable");
-
-    let row=table.insertRow();
-
-    row.innerHTML=`
-    <td><input type="text"></td>
-    <td><input type="text"></td>
-    <td>
-        <input type="number" min="1">
-    </td>
-    <td>
-        <select>
-            <option>O</option>
-            <option>A+</option>
-            <option>A</option>
-            <option>B+</option>
-            <option>B</option>
-            <option>C</option>
-            <option>RA</option>
-        </select>
-    </td>
-    `;
-}
-
 function gradePoint(g){
 
     if(g=="O") return 10;
@@ -539,113 +526,64 @@ function gradePoint(g){
     return 0;
 }
 
-function calculateGPA(){
-
-    let semester =
-    document.getElementById("semester").value;
-
-    if(
-        semester === "" ||
-        semester === "SELECT SEMESTER" ||
-        semester === "Select Semester"
-    ){
-        alert("PLEASE SELECT A SEMESTER");
-        return;
-    }
-
-    let table =
-    document.getElementById("subjectTable");
-
-    let totalCredits = 0;
-    let totalPoints = 0;
-
-    for(let i = 1; i < table.rows.length; i++){
-
-        let credit = parseFloat(
-            table.rows[i].cells[2]
-            .querySelector("input").value
-        );
-
-        let grade =
-            table.rows[i].cells[3]
-            .querySelector("select").value;
-
-        if(!isNaN(credit)){
-
-            totalCredits += credit;
-
-            totalPoints +=
-            credit * gradePoint(grade);
-        }
-    }
-
-    if(totalCredits === 0){
-        alert("PLEASE ENTER SUBJECT DETAILS");
-        return;
-    }
-
-    let gpa =
-    (totalPoints / totalCredits).toFixed(2);
-
-    document.getElementById("gpaResult").innerHTML =
-    "FINAL GPA : " + gpa;
-}
-
 
 function createSemesterInputs(){
 
-    let selected=document.querySelector(
-    'input[name="semcount"]:checked');
+    let selected = document.querySelector(
+        'input[name="semcount"]:checked'
+    );
 
     if(!selected){
         alert("Select Semester Count");
         return;
     }
 
-    let count=parseInt(selected.value);
+    let count = parseInt(selected.value);
 
-    let div=document.getElementById("semesterInputs");
+    let div = document.getElementById("semesterInputs");
 
-    div.innerHTML="";
+    // Remove all old GPA fields
+    div.innerHTML = "";
 
-    for(let i=1;i<=count;i++){
+    for(let i = 1; i <= count; i++){
 
-        div.innerHTML+=`
+        div.innerHTML += `
         <input type="number"
-        step="0.01"
-        class="gpaInput"
-        placeholder="Semester ${i} GPA">
+               step="0.01"
+               class="gpaInput"
+               placeholder="Semester ${i} GPA">
         `;
     }
 }
 
 function calculateCGPA(){
 
-    let gpas=document.getElementsByClassName("gpaInput");
+    let gpas = document.querySelectorAll(
+        "#semesterInputs .gpaInput"
+    );
 
-    let sum=0;
+    let sum = 0;
+    let count = 0;
 
-    let count=0;
+    gpas.forEach(function(input){
 
-    for(let g of gpas){
-
-        let value=parseFloat(g.value);
+        let value = parseFloat(input.value);
 
         if(!isNaN(value)){
-            sum+=value;
+            sum += value;
             count++;
         }
-    }
+    });
 
-    if(count===0){
+    if(count === 0){
         alert("Enter GPA values");
         return;
     }
 
-    let cgpa=(sum/count).toFixed(2);
+    let cgpa = (sum / count).toFixed(2);
 
-    document.getElementById("cgpaResult").innerHTML=
-    "Final CGPA : "+cgpa;
+    document.getElementById("cgpaResult").innerHTML =
+        "Final CGPA : " + cgpa;
 }
 function togglePassword(){
 
@@ -690,169 +628,47 @@ function printReport(){
     let degree = document.getElementById("degree").value;
     let department = document.getElementById("department").value;
     let year = document.getElementById("year").value;
+    let regulation = document.getElementById("regulation").value;
     let institution = document.getElementById("institution").value;
     let university = document.getElementById("university").value;
     let district = document.getElementById("text").value;
     let mail = document.getElementById("mail").value;
+    let cgpaRegulation = document.getElementById("cgparegulation")
+? document.getElementById("cgparegulation").value
+: "";
 
-    let semester = document.getElementById("semester") ?
-                   document.getElementById("semester").value : "";
+let gpaRegulation = document.getElementById("gparegulation")
+? document.getElementById("gparegulation").value
+: "";
 
-    let gpaRegulation = document.getElementById("gparegulation") ?
-                        document.getElementById("gparegulation").value : "";
+    let cgpa = document.getElementById("cgpaResult")
+    ? document.getElementById("cgpaResult").innerText
+    : "";
+    /* ---------- ALL SEMESTER SUBJECT TABLES ---------- */
+let allSemesterTables = "";
 
-    let cgpaRegulation = document.getElementById("cgparegulation") ?
-                         document.getElementById("cgparegulation").value : "";
+for(let semNo = 1; semNo <= semesterGPAs.length; semNo++){
 
-    let gpa = document.getElementById("gpaResult") ?
-              document.getElementById("gpaResult").innerText : "";
+    let table =
+    document.getElementById(`subjectTable${semNo}`);
 
-    let cgpa = document.getElementById("cgpaResult") ?
-               document.getElementById("cgpaResult").innerText : "";
+    if(!table) continue;
 
-    let tableRows = "";
+    let rows = "";
 
-    let table = document.getElementById("subjectTable");
+    for(let i = 1; i < table.rows.length; i++){
 
-    if(table){
-        for(let i = 1; i < table.rows.length; i++){
-
-            let title = table.rows[i].cells[0].querySelector("input").value;
-            let code = table.rows[i].cells[1].querySelector("input").value;
-            let credit = table.rows[i].cells[2].querySelector("input").value;
-            let grade = table.rows[i].cells[3].querySelector("select").value;
-
-            tableRows += `
-            <tr>
-                <td>${title}</td>
-                <td>${code}</td>
-                <td>${credit}</td>
-                <td>${grade}</td>
-            </tr>`;
-        }
-    }
-
-    let cgpaRows = "";
-
-    let gpaInputs = document.getElementsByClassName("gpaInput");
-
-    for(let i = 0; i < gpaInputs.length; i++){
-
-        cgpaRows += `
+        rows += `
         <tr>
-            <td>Semester ${i + 1}</td>
-            <td>${gpaInputs[i].value}</td>
+            <td>${table.rows[i].cells[0].querySelector("input").value}</td>
+            <td>${table.rows[i].cells[1].querySelector("input").value}</td>
+            <td>${table.rows[i].cells[2].querySelector("input").value}</td>
+            <td>${table.rows[i].cells[3].querySelector("select").value}</td>
         </tr>`;
     }
 
-    if(cgpaRows.trim() === ""){
-        cgpaRows = `
-        <tr>
-            <td colspan="2">No CGPA Data Available</td>
-        </tr>`;
-    }
-
-    let printWindow = window.open("", "_blank");
-
-    printWindow.document.write(`
-    <html>
-    <head>
-
-        <style>
-
-        @page{
-            size:A4;
-            margin:10mm;
-        }
-
-        body{
-            font-family:Arial,sans-serif;
-            padding:20px;
-            color:black;
-        }
-
-        .header{
-            display:flex;
-            align-items:center;
-            gap:20px;
-        }
-
-        .logo{
-            width:80px;
-            height:80px;
-        }
-
-        .header h2{
-            flex:1;
-            text-align:center;
-            margin-right:80px;
-        }
-
-        table{
-            width:100%;
-            border-collapse:collapse;
-            margin-top:15px;
-        }
-
-        table,th,td{
-            border:1px solid black;
-        }
-
-        th,td{
-            padding:8px;
-            text-align:center;
-        }
-
-        .line{
-            margin:6px 0;
-        }
-
-        .result{
-            font-size:22px;
-            font-weight:bold;
-            text-align:center;
-            margin-top:20px;
-        }
-
-        .verified{
-            text-align:right;
-            margin-top:50px;
-            font-size:22px;
-            font-weight:bold;
-        }
-
-        hr{
-            margin:20px 0;
-        }
-
-        </style>
-    </head>
-
-    <body>
-
-        <div class="header">
-            <img src="logo.png" alt="Logo" class="logo">
-            <h2>University Student CGPA Calculator</h2>
-        </div>
-
-        <hr>
-
-        <p class="line"><b>Name :</b> ${studentName}</p>
-        <p class="line"><b>Register No :</b> ${regNo}</p>
-        <p class="line"><b>Degree :</b> ${degree}</p>
-        <p class="line"><b>Department :</b> ${department}</p>
-        <p class="line"><b>Year :</b> ${year}</p>
-        <p class="line"><b>Institution :</b> ${institution}</p>
-        <p class="line"><b>University :</b> ${university}</p>
-        <p class="line"><b>District :</b> ${district}</p>
-        <p class="line"><b>Mail ID :</b> ${mail}</p>
-
-        <hr>
-
-        <h2>GPA Calculator</h2>
-
-        <p><b>Semester :</b> ${semester}</p>
-        <p><b>Regulation :</b> ${gpaRegulation}</p>
+    allSemesterTables += `
+        <h3>Semester ${semNo}</h3>
 
         <table>
             <tr>
@@ -862,46 +678,285 @@ function printReport(){
                 <th>Grade</th>
             </tr>
 
-            ${tableRows}
+            ${rows}
         </table>
+        
+        <br>
 
         <div class="result">
-            ${gpa}
+            Semester ${semNo} GPA :
+            ${semesterGPAs[semNo-1] || "Not Calculated"}
         </div>
 
-        <hr>
+        <br>
+    `;
+}
 
-        <h2>CGPA Calculator</h2>
+    /* ---------- GPA SUMMARY ---------- */
 
-        <p><b>Regulation :</b> ${cgpaRegulation}</p>
+    /* ---------- CGPA INPUT SUMMARY ---------- */
 
-        <table>
-            <tr>
-                <th>Semester</th>
-                <th>GPA Obtained</th>
-            </tr>
+let semesterGPARows = "";
 
-            ${cgpaRows}
-        </table>
+let gpaInputs =
+document.querySelectorAll("#semesterInputs .gpaInput");
 
-        <div class="result">
-            ${cgpa}
-        </div>
+gpaInputs.forEach((input,index)=>{
 
-        <div class="verified">
-            VERIFIED
-        </div>
+    semesterGPARows += `
+    <tr>
+        <td>Semester ${index + 1}</td>
+        <td>${input.value || "-"}</td>
+    </tr>`;
+});
+
+    /* ---------- OPEN PRINT WINDOW ---------- */
+
+    let printWindow =
+    window.open("", "_blank");
+
+    printWindow.document.write(`
+
+    <html>
+    <head>
+
+    <title>CGPA Report</title>
+
+    <style>
+    body{
+        font-family:Arial,sans-serif;
+        padding:20px;
+    }
+
+    .header{
+        display:flex;
+        align-items:center;
+        gap:20px;
+    }
+
+    .logo{
+        width:80px;
+        height:80px;
+    }
+
+    .header h2{
+        flex:1;
+        text-align:center;
+    }
+
+    table{
+        width:100%;
+        border-collapse:collapse;
+        margin-top:10px;
+    }
+
+    table,th,td{
+        border:1px solid black;
+    }
+
+    th,td{
+        padding:8px;
+        text-align:center;
+    }
+
+    .line{
+        margin:8px 0;
+    }
+
+    .verified{
+        text-align:right;
+        margin-top:60px;
+        font-size:20px;
+        font-weight:bold;
+    }
+    .result{
+    font-weight:bold;
+    font-size:16px;
+    margin-top:5px;
+}
+
+    hr{
+        margin:20px 0;
+    }
+
+    </style>
+
+    </head>
+
+    <body>
+
+    <div class="header">
+
+        <img src="logo.png" class="logo">
+
+        <h2>
+           UNIVERSITY STUDENT CGPA REPORT
+        </h2>
+
+    </div>
+
+    <hr>
+
+    <p class="line"><b>Name :</b> ${studentName}</p>
+    <p class="line"><b>Register No :</b> ${regNo}</p>
+    <p class="line"><b>Degree :</b> ${degree}</p>
+    <p class="line"><b>Department :</b> ${department}</p>
+    <p class="line"><b>Year :</b> ${year}</p>
+    <p class="line"><b>Regulation :</b> ${regulation}</p>
+    <p class="line"><b>Institution :</b> ${institution}</p>
+    <p class="line"><b>University :</b> ${university}</p>
+    <p class="line"><b>District :</b> ${district}</p>
+    <p class="line"><b>Mail :</b> ${mail}</p>
+
+    <hr>
+
+    <h2> Semester GPA Calculation </h2>
+
+    ${allSemesterTables}
+
+    <hr>
+
+    <h2> Semester CGPA Calculation </h2>
+
+    <table>
+
+        <tr>
+            <th>Semester</th>
+            <th>GPA</th>
+        </tr>
+
+        ${semesterGPARows}
+
+    </table>
+
+    <hr>
+
+    <h1 style="text-align:center;">
+        ${cgpa}
+    </h1>
+
+    <div class="verified">
+        VERIFIED
+    </div>
 
     </body>
     </html>
+
     `);
 
     printWindow.document.close();
 
     setTimeout(() => {
+
         printWindow.focus();
         printWindow.print();
-    }, 1000);
+
+    },1000);
+}
+function addSemester() {
+
+    let container = document.getElementById("semesterContainer");
+
+    let semesterNo =
+    container.getElementsByClassName("semester-card").length + 2;
+
+    let div = document.createElement("div");
+
+    div.className = "semester-card";
+
+    div.innerHTML = `
+        <h3>Semester ${semesterNo}</h3>
+
+        <table id="subjectTable${semesterNo}">
+            <tr>
+                <th>Subject Title</th>
+                <th>Subject Code</th>
+                <th>Credit</th>
+                <th>Grade</th>
+            </tr>
+        </table>
+
+        <button onclick="addSubject(${semesterNo})">
+            Add Subject
+        </button>
+
+        <button onclick="calculateGPA(${semesterNo})">
+            Calculate GPA
+        </button>
+
+        <div id="gpaResult${semesterNo}" class="result"></div>
+
+        <hr>
+    `;
+
+    container.appendChild(div);
+}
+function addSubject(semesterNo){
+
+    let table =
+    document.getElementById(`subjectTable${semesterNo}`);
+
+    let row = table.insertRow();
+
+    row.innerHTML = `
+        <td><input type="text"></td>
+        <td><input type="text"></td>
+        <td><input type="number" min="1"></td>
+        <td>
+            <select>
+                <option>O</option>
+                <option>A+</option>
+                <option>A</option>
+                <option>B+</option>
+                <option>B</option>
+                <option>C</option>
+                <option>RA</option>
+            </select>
+        </td>
+    `;
+}
+function calculateGPA(semesterNo){
+
+    let table =
+    document.getElementById(`subjectTable${semesterNo}`);
+
+    let totalCredits = 0;
+    let totalPoints = 0;
+
+    for(let i = 1; i < table.rows.length; i++){
+
+        let credit = parseFloat(
+            table.rows[i].cells[2]
+            .querySelector("input").value
+        );
+
+        let grade =
+            table.rows[i].cells[3]
+            .querySelector("select").value;
+
+        if(!isNaN(credit)){
+
+            totalCredits += credit;
+
+            totalPoints +=
+            credit * gradePoint(grade);
+        }
+    }
+
+    if(totalCredits === 0){
+        alert("PLEASE ENTER SUBJECT DETAILS");
+        return;
+    }
+
+    let gpa =
+    (totalPoints / totalCredits).toFixed(2);
+
+    semesterGPAs[semesterNo - 1] = gpa;
+    console.log(semesterGPAs);
+
+    document.getElementById(`gpaResult${semesterNo}`)
+    .innerHTML =
+    `Semester ${semesterNo} GPA : ${gpa}`;
 }
 </script>
 
