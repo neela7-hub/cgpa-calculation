@@ -330,8 +330,12 @@ Password must contain minimum 8 characters with 1 uppercase, 1 lowercase, 1 nume
         </tr>
     </table>
 
-    <button onclick="addSubject(1)">Add Subject</button>
-    <button onclick="calculateGPA(1)">Calculate GPA</button>
+    <div id="firstSemesterContainer"></div>
+
+<button onclick="addSemester()">Add Semester</button>
+<button onclick="printReport()">Print Report</button>
+
+<div id="semesterContainer"></div>
     <button onclick="addSemester()">Add Semester</button>
     <button onclick="printReport()">Print Report</button>
 
@@ -466,17 +470,41 @@ function openGPA(){
     let degree =
     document.getElementById("degree").value;
 
-    if(degree === "B.E" || degree === "B.TECH"){
-        maxSemester = 8;
-    }
-    else{
-        maxSemester = 6;
-    }
+    maxSemester =
+    (degree === "B.E" || degree === "B.TECH")
+    ? 8 : 6;
 
-    let radioDiv =
-    document.getElementById("gpaSemesterRadio");
+    let firstContainer =
+    document.getElementById("firstSemesterContainer");
 
-    radioDiv.innerHTML = "";
+    firstContainer.innerHTML = `
+        <div class="semester-card">
+
+            <h3>Semester ${startSemester}</h3>
+
+            <table id="subjectTable${startSemester}">
+                <tr>
+                    <th>Subject Title</th>
+                    <th>Subject Code</th>
+                    <th>Credit</th>
+                    <th>Grade</th>
+                </tr>
+            </table>
+
+            <button onclick="addSubject(${startSemester})">
+                Add Subject
+            </button>
+
+            <button onclick="calculateGPA(${startSemester})">
+                Calculate GPA
+            </button>
+
+            <div id="gpaResult${startSemester}" class="result"></div>
+
+        </div>
+    `;
+
+    document.getElementById("semesterContainer").innerHTML="";
 }
 
 function openCGPA(){
@@ -625,8 +653,6 @@ document.getElementById("university").addEventListener("input", function(){
     this.value = this.value.toUpperCase();
 });
 function printReport(){
-
-```
 let studentName = document.getElementById("studentName").value;
 let regNo = document.getElementById("regNo").value;
 let degree = document.getElementById("degree").value;
@@ -841,7 +867,6 @@ setTimeout(() => {
     printWindow.focus();
     printWindow.print();
 }, 1000);
-```
 
 }
 
