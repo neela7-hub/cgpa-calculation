@@ -473,11 +473,6 @@ function openGPA(){
         maxSemester = 6;
     }
 
-    document.getElementById(
-    "firstSemesterHeading"
-    ).innerHTML =
-    "Semester " + startSemester;
-
     let radioDiv =
     document.getElementById("gpaSemesterRadio");
 
@@ -863,39 +858,6 @@ function addSemester(){
 
     let container =
     document.getElementById("semesterContainer");
-
-    let div = document.createElement("div");
-
-    div.className = "semester-card";
-
-    div.innerHTML = `
-        <h3>Semester ${semesterNo}</h3>
-
-        <table id="subjectTable${semesterNo}">
-            <tr>
-                <th>Subject Title</th>
-                <th>Subject Code</th>
-                <th>Credit</th>
-                <th>Grade</th>
-            </tr>
-        </table>
-
-        <button onclick="addSubject(${semesterNo})">
-            Add Subject
-        </button>
-
-        <button onclick="calculateGPA(${semesterNo})">
-            Calculate GPA
-        </button>
-
-        <div id="gpaResult${semesterNo}" class="result"></div>
-
-        <hr>
-    `;
-
-    container.appendChild(div);
-}
-let semesterNo = currentSemester;
 
     let div = document.createElement("div");
 
