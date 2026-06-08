@@ -321,6 +321,7 @@ Password must contain minimum 8 characters with 1 uppercase, 1 lowercase, 1 nume
 
 <div id="gpaSemesterRadio" class="radio-group"></div>
 
+<div id="firstSemesterContainer">
     <table id="subjectTable1">
         <tr>
             <th>Subject Title</th>
@@ -330,19 +331,16 @@ Password must contain minimum 8 characters with 1 uppercase, 1 lowercase, 1 nume
         </tr>
     </table>
 
-    <div id="firstSemesterContainer"></div>
+    <button onclick="addSubject(1)">Add Subject</button>
+    <button onclick="calculateGPA(1)">Calculate GPA</button>
+
+    <div class="result" id="gpaResult1"></div>
+</div>
+
+<div id="semesterContainer"></div>
 
 <button onclick="addSemester()">Add Semester</button>
 <button onclick="printReport()">Print Report</button>
-
-<div id="semesterContainer"></div>
-    <button onclick="addSemester()">Add Semester</button>
-    <button onclick="printReport()">Print Report</button>
-
-<div class="result" id="gpaResult1"></div>
-<div id="semesterContainer"></div>
-</div>
-
 <div class="card hidden" id="cgpaPage">
 
 <hr>
@@ -711,7 +709,7 @@ for(let semNo = startSemester;
 
         <div class="result">
             Semester ${semNo} GPA :
-            ${semesterGPAs[semNo] || "Not Calculated"}
+            ${semesterGPAs[semNo - 1] || "Not Calculated"}
         </div>
 
         <br>
